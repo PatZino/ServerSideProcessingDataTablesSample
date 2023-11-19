@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<table id="dataTable">
+    <thead>
+        <!-- Define table headers -->
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <!-- More headers -->
+        </tr>
+    </thead>
+</table>
+
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DataTables JS -->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+<!-- Your custom script -->
+<script>
+    $(document).ready(function () {
+        $.noConflict();
+
+        $('#dataTable').DataTable({
+            "searching": true,
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": '@Url.Action("GetData", "Home")',
+                "type": "GET",
+                "data": function (d) {
+                    d.searchValue = d.search.value;
+
+                    // Sorting information
+                    d.order = [];
+                    $('#dataTable th').each(function (index) {
+                        const columnName = $(this).data('name'); // Assuming data-name attribute is set to identify columns
+                        const sortOrder = $(this).hasClass('sorting_asc') ? 'asc' : ($(this).hasClass('sorting_desc') ? 'desc' : '');
+                        if (columnName !== undefined && sortOrder !== '') {
+                            d.order.push({ "column": index, "dir": sortOrder });
+                        }
+                    });
+                }
+            },
+            "columns": [
+                // Define your columns here
+                { "data": "id" },
+                { "data": "name" },
+                // More columns
+            ]
+        });
+    });
+</script>
+
+
